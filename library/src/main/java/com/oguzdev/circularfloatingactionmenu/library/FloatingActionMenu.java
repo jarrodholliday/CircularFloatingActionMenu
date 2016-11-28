@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -491,11 +492,14 @@ public class FloatingActionMenu {
     }
 
     public void removeViewFromCurrentContainer(View view) {
-        if(systemOverlay) {
-            overlayContainer.removeView(view);
-        }
-        else {
-            ((ViewGroup)getActivityContentView()).removeView(view);
+        try {
+            if (systemOverlay) {
+                overlayContainer.removeView(view);
+            } else {
+                ((ViewGroup) getActivityContentView()).removeView(view);
+            }
+        } catch (Exception e) {
+            Log.e(FloatingActionMenu.class.getSimpleName(), e.getMessage(), e);
         }
     }
 
@@ -511,6 +515,10 @@ public class FloatingActionMenu {
 
     public void setStateChangeListener(MenuStateChangeListener listener) {
         this.stateChangeListener = listener;
+    }
+
+    public void setActionViewClickListener(View.OnClickListener listener) {
+        mainActionView.setOnClickListener(listener);
     }
 
     /**
