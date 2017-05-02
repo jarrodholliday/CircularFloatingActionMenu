@@ -242,7 +242,7 @@ public class FloatingActionMenu {
             for (int i = 0; i < subActionItems.size(); i++) {
                 removeViewFromCurrentContainer(subActionItems.get(i).view);
             }
-            detachOverlayContainer();
+            if (isSystemOverlay())  detachOverlayContainer();
         }
         // do not forget to specify that the menu is now closed.
         open = false;
@@ -475,7 +475,8 @@ public class FloatingActionMenu {
     }
 
     public void detachOverlayContainer() {
-        getWindowManager().removeView(overlayContainer);
+        if (overlayContainer != null)
+            getWindowManager().removeView(overlayContainer);
     }
 
     public int getStatusBarHeight() {
