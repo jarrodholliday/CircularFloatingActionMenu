@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -248,7 +249,7 @@ public class FloatingActionMenu {
             for (int i = 0; i < subActionItems.size(); i++) {
                 removeViewFromCurrentContainer(subActionItems.get(i).view);
             }
-            detachOverlayContainer();
+            if (isSystemOverlay())  detachOverlayContainer();
         }
         // do not forget to specify that the menu is now closed.
         open = false;
@@ -497,7 +498,8 @@ public class FloatingActionMenu {
     }
 
     public void detachOverlayContainer() {
-        getWindowManager().removeView(overlayContainer);
+        if (overlayContainer != null)
+            getWindowManager().removeView(overlayContainer);
     }
 
     public int getStatusBarHeight() {
@@ -514,11 +516,14 @@ public class FloatingActionMenu {
     }
 
     public void removeViewFromCurrentContainer(View view) {
-        if(systemOverlay) {
-            overlayContainer.removeView(view);
-        }
-        else {
-            ((ViewGroup)getActivityContentView()).removeView(view);
+        try {
+            if (systemOverlay) {
+                overlayContainer.removeView(view);
+            } else {
+                ((ViewGroup) getActivityContentView()).removeView(view);
+            }
+        } catch (Exception e) {
+            Log.e(FloatingActionMenu.class.getSimpleName(), e.getMessage(), e);
         }
     }
 
@@ -534,6 +539,10 @@ public class FloatingActionMenu {
 
     public void setStateChangeListener(MenuStateChangeListener listener) {
         this.stateChangeListener = listener;
+    }
+
+    public void setActionViewClickListener(View.OnClickListener listener) {
+        mainActionView.setOnClickListener(listener);
     }
 
     /**
